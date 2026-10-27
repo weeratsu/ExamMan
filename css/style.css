@@ -1,0 +1,25 @@
+body{font-family:Segoe UI,Tahoma,sans-serif;background:#f3f5f9;margin:0;color:#222}
+.w{max-width:860px;margin:auto;padding:16px}
+.c{background:#fff;border-radius:10px;padding:16px;margin:12px 0;box-shadow:0 1px 4px #0001}
+
+h1{color:#0067b8;font-size:22px}
+select,button{font-size:15px;padding:8px 12px;margin:4px;border-radius:6px;border:1px solid #bbb}
+button{background:#0067b8;color:#fff;border:0;cursor:pointer}
+button.g{background:#888}
+
+.o{display:block;padding:9px;margin:5px 0;border:1px solid #ddd;border-radius:6px;cursor:pointer}
+.o:hover{background:#eef5fc}
+.ok{background:#dff5e1!important;border-color:#2e9e44}
+.ng{background:#fde2e2!important;border-color:#d33}
+
+.rm{background:#fff7e0;border-left:4px solid #f0a500;padding:8px;margin-top:8px;white-space:pre-wrap}
+.res{padding:8px;margin-top:8px;font-weight:600}
+.q{white-space:pre-wrap;font-weight:600}
+.nav span{display:inline-block;width:30px;text-align:center;margin:2px;padding:3px 0;border-radius:4px;background:#ddd;cursor:pointer;font-size:12px}
+.nav .ok{background:#7c7}
+.nav .ng{background:#e77}
+.nav .cur{outline:2px solid #0067b8}
+.nav .an{background:#9bd}
+
+.st{width:100%;border-collapse:collapse;font-size:13px}.st th,.st td{border-bottom:1px solid #eee;padding:6px;text-align:left}.st button{padding:4px 8px;font-size:12px;margin:1px}
+.bar{background:#eee;height:6px;border-radius:3px;width:80px;display:inline-block;margin-right:4px}.bar i{display:block;height:6px;background:#0067b8;border-radius:3px}
