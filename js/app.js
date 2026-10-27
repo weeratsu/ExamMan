@@ -1,5 +1,5 @@
 
-const DB=window.EXAMS||{};let S=null;const $=i=>document.getElementById(i);
+const DB=window.EXAMS||{};const LK=p=>{const u=((window.EXAM_LINKS||{})[S?S.ex:'']||{})[p];return u?` <a href="${u}" target="_blank" rel="noopener" title="คลิปต้นทาง">▶️ YouTube</a>`:''};let S=null;const $=i=>document.getElementById(i);
 function init(){$('ex').innerHTML=Object.keys(DB).map(k=>`<option>${k}</option>`).join('');$('ex').onchange=fp;fp()}
 function fp(){const ps=[...new Set(DB[$('ex').value].map(q=>q.part))];$('pt').innerHTML='<option value="all">ทั้งหมด</option>'+ps.map(p=>`<option value="${p}">Part ${p}</option>`).join('')}
 function start(){let L=DB[$('ex').value].filter(q=>$('pt').value=='all'||q.part==$('pt').value);if($('sh').checked)L=[...L].sort(()=>Math.random()-.5);
@@ -47,7 +47,7 @@ let h='<div class="c"><h2>📊 Status</h2>';
 if(!s.length)h+='ยังไม่มีความคืบหน้าที่บันทึกไว้';
 else h+='<table class="st"><tr><th>วิชา/Part</th><th>โหมด</th><th>ความคืบหน้า</th><th>ถูก</th><th>สถานะ</th><th>ล่าสุด</th><th></th></tr>'+s.map(([k,r])=>{const st=(r.fin||(r.md<3&&r.done&&r.done.every(x=>x)))?'✅ ส่งแล้ว':r.a?'⏳ กำลังทำ (ข้อ '+(r.i+1)+')':'🆕 ยังไม่เริ่ม';
 const cr=(r.md<3||r.fin)?`${r.c}/${r.n} (${Math.round(r.c/r.n*100)}%)`:'(เฉลยตอนส่ง)';
-return `<tr><td>${r.ex} · ${r.pt=='all'?'ทั้งหมด':'Part '+r.pt}</td><td>${MN[r.md]}</td><td><div class="bar"><i style="width:${r.a/r.n*100}%"></i></div>${r.a}/${r.n}</td><td>${cr}</td><td>${st}</td><td>${f(r.t)}</td>
+return `<tr><td>${r.ex} · ${r.pt=='all'?'ทั้งหมด':'Part '+r.pt}${r.pt!='all'&&((window.EXAM_LINKS||{})[r.ex]||{})[r.pt]?` <a href="${window.EXAM_LINKS[r.ex][r.pt]}" target="_blank" rel="noopener">▶️</a>`:''}</td><td>${MN[r.md]}</td><td><div class="bar"><i style="width:${r.a/r.n*100}%"></i></div>${r.a}/${r.n}</td><td>${cr}</td><td>${st}</td><td>${f(r.t)}</td>
 <td><button onclick="resume('${k}')">${r.fin?'ดูผล':'ทำต่อ'}</button><button class="g" onclick="restart('${k}')">เริ่มใหม่</button><button class="g" onclick="del('${k}')">ลบ</button></td></tr>`}).join('')+'</table>';
 if((d.h||[]).length)h+='<h3>ประวัติการส่ง</h3><table class="st"><tr><th>วันที่</th><th>วิชา/Part</th><th>โหมด</th><th>คะแนน</th></tr>'+d.h.map(x=>`<tr><td>${f(x.t)}</td><td>${x.ex} · ${x.pt=='all'?'ทั้งหมด':'Part '+x.pt}</td><td>${MN[x.md]}</td><td>${x.c}/${x.n} (${Math.round(x.c/x.n*100)}%) ${x.c/x.n>=.7?'🎉':'❌'}</td></tr>`).join('')+'</table>';
 $('app').innerHTML=h+`<div style="margin-top:12px"><button onclick="expP()">💾 Export progress</button><label class="g" style="background:#888;color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer;margin:4px">📂 Import progress<input type="file" accept=".json" style="display:none" onchange="impP(this)"></label></div></div>`}
@@ -55,7 +55,7 @@ $('app').innerHTML=h+`<div style="margin-top:12px"><button onclick="expP()">💾
 // ===== In-exam switcher (Part / Mode) =====
 function bar(){const ps=[...new Set(DB[S.ex].map(q=>q.part))];
 return `<div class="c">${S.ex} · Part: <select onchange="swPart(this.value)"><option value="all"${S.pt=='all'?' selected':''}>ทั้งหมด</option>${ps.map(p=>`<option value="${p}"${p==S.pt?' selected':''}>Part ${p}</option>`).join('')}</select>
-โหมด: <select onchange="swMode(+this.value)">${[1,2,3].map(m=>`<option value="${m}"${m==S.md?' selected':''}>${MN[m]}</option>`).join('')}</select>${S.md<3?` <label><input type="checkbox" ${S.retry!==false?'checked':''} onchange="S.retry=this.checked"> ให้เลือกใหม่ได้เมื่อตอบผิด</label>`:''}
+โหมด: <select onchange="swMode(+this.value)">${[1,2,3].map(m=>`<option value="${m}"${m==S.md?' selected':''}>${MN[m]}</option>`).join('')}</select>${S.pt!='all'?LK(S.pt):''}${S.md<3?` <label><input type="checkbox" ${S.retry!==false?'checked':''} onchange="S.retry=this.checked"> ให้เลือกใหม่ได้เมื่อตอบผิด</label>`:''}
  <span style="float:right">⏱ <b id="tm" style="${TS()?'':'display:none'}">${fmt(S.el||0)}</b> <button class="g" style="padding:3px 8px" onclick="tgT()">${TS()?'ซ่อน':'แสดง'}เวลา</button> <button class="g" style="padding:3px 8px" onclick="S.pause=!S.pause;draw()">${S.pause?'▶ ต่อ':'⏸ พัก'}</button></span></div>`}
 function swPart(p){save();const k=sk(S.ex,p);if((ld().s||{})[k])return resume(k);const ex=S.ex,md=S.md;
 const L=DB[ex].filter(q=>p=='all'||q.part==p);S={ex,pt:p,L,i:0,md,sel:L.map(()=>[]),done:L.map(()=>false),fin:false};draw()}

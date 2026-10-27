@@ -5216,3 +5216,5 @@ window.EXAMS['GH-300']=[
 "r": ""
 }
 ];
+window.EXAM_LINKS=window.EXAM_LINKS||{};
+window.EXAM_LINKS['GH-300']={"01": "https://www.youtube.com/watch?v=VlVPIA8pGKo", "02": "http://www.youtube.com/watch?v=mHTfAwGtSgk", "03": "http://www.youtube.com/watch?v=CnbfbwPIIyA", "04": "http://www.youtube.com/watch?v=cldM2sUCBoE", "05": "http://www.youtube.com/watch?v=4Z2HegfVjIA", "06": "http://www.youtube.com/watch?v=oe8XuVWU2hA", "07": "http://www.youtube.com/watch?v=q5Dk8TASHqQ"};
