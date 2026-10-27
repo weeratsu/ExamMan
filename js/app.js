@@ -56,7 +56,7 @@ $('app').innerHTML=h+`<div style="margin-top:12px"><button onclick="expP()">💾
 function bar(){const ps=[...new Set(DB[S.ex].map(q=>q.part))];
 return `<div class="c">${S.ex} · Part: <select onchange="swPart(this.value)"><option value="all"${S.pt=='all'?' selected':''}>ทั้งหมด</option>${ps.map(p=>`<option value="${p}"${p==S.pt?' selected':''}>Part ${p}</option>`).join('')}</select>
 โหมด: <select onchange="swMode(+this.value)">${[1,2,3].map(m=>`<option value="${m}"${m==S.md?' selected':''}>${MN[m]}</option>`).join('')}</select>${S.md<3?` <label><input type="checkbox" ${S.retry!==false?'checked':''} onchange="S.retry=this.checked"> ให้เลือกใหม่ได้เมื่อตอบผิด</label>`:''}
- <span style="float:right">⏱ <b id="tm" style="${TS()?'':'display:none'}">${fmt(S.el||0)}</b> <button class="g" style="padding:3px 8px" onclick="tgT()">${TS()?'ซ่อน':'แสดง'}เวลา</button></span></div>`}
+ <span style="float:right">⏱ <b id="tm" style="${TS()?'':'display:none'}">${fmt(S.el||0)}</b> <button class="g" style="padding:3px 8px" onclick="tgT()">${TS()?'ซ่อน':'แสดง'}เวลา</button> <button class="g" style="padding:3px 8px" onclick="S.pause=!S.pause;draw()">${S.pause?'▶ ต่อ':'⏸ พัก'}</button></span></div>`}
 function swPart(p){save();const k=sk(S.ex,p);if((ld().s||{})[k])return resume(k);const ex=S.ex,md=S.md;
 const L=DB[ex].filter(q=>p=='all'||q.part==p);S={ex,pt:p,L,i:0,md,sel:L.map(()=>[]),done:L.map(()=>false),fin:false};draw()}
 function swMode(m){if(S.fin)return alert('ส่งแล้ว เปลี่ยนโหมดไม่ได้ — กดเริ่มใหม่ที่หน้า Status');S.md=m;
@@ -68,7 +68,7 @@ function chk(k){if(S.retry===false||S.md==3||eq(k))return true;(S.miss=S.miss||[
 const fmt=s=>[Math.floor(s/3600),Math.floor(s/60)%60,s%60].map(x=>String(x).padStart(2,'0')).join(':');
 const TS=()=>localStorage.getItem('examman_timer')!=='0';
 function tgT(){localStorage.setItem('examman_timer',TS()?'0':'1');draw()}
-setInterval(()=>{if(!S||S.fin||document.hidden)return;S.el=(S.el||0)+1;const e=$('tm');if(e)e.textContent=fmt(S.el);if(S.el%10==0)save()},1000);
+setInterval(()=>{if(!S||S.fin||S.pause||document.hidden)return;S.el=(S.el||0)+1;const e=$('tm');if(e)e.textContent=fmt(S.el);if(S.el%10==0)save()},1000);
 
 
 // ===== Export / Import progress =====
