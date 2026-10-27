@@ -37,7 +37,7 @@ const sv=d=>localStorage.setItem(KEY,JSON.stringify(d));
 const sk=(ex,pt)=>ex+'|'+pt;
 function save(){if(!S)return;if(S.md<3&&S.done.length&&S.done.every(x=>x))S.fin=true;const d=ld();d.s=d.s||{};const a=S.sel.filter(x=>x.length).length,c=S.L.filter((_,j)=>S.done[j]&&right(j)).length;
 d.s[sk(S.ex,S.pt)]={ex:S.ex,pt:S.pt,md:S.md,i:S.i,ids:S.L.map(q=>q.n),sel:S.sel,done:S.done,fin:S.fin,miss:S.miss||[],el:S.el||0,t:Date.now(),a,c,n:S.L.length};
-if(S.fin&&!S.logged){S.logged=1;d.h=d.h||[];d.h.unshift({ex:S.ex,pt:S.pt,md:S.md,c:S.L.filter((_,j)=>right(j)).length,n:S.L.length,t:Date.now()});d.h=d.h.slice(0,50);d.s[sk(S.ex,S.pt)].logged=1}
+if(S.fin&&!S.logged){S.logged=1;d.h=d.h||[];d.h.unshift({ex:S.ex,pt:S.pt,md:S.md,c:S.L.filter((_,j)=>right(j)).length,n:S.L.length,el:S.el||0,t:Date.now()});d.h=d.h.slice(0,50);d.s[sk(S.ex,S.pt)].logged=1}
 sv(d)}
 function resume(k){const r=ld().s[k],m=new Map(DB[r.ex].map(q=>[q.n,q]));S={ex:r.ex,pt:r.pt,md:r.md,i:r.i,L:r.ids.map(n=>m.get(n)),sel:r.sel,done:r.done,fin:r.fin,miss:r.miss||[],el:r.el||0,logged:r.logged};$('setup').style.display='none';draw()}
 function restart(k){const r=ld().s[k];$('ex').value=r.ex;fp();$('pt').value=r.pt;$('md').value=r.md;start()}
@@ -45,11 +45,12 @@ function del(k){if(!confirm('ลบความคืบหน้านี้?')
 function home(){S=null;$('setup').style.display='';const d=ld(),s=Object.entries(d.s||{}).sort((a,b)=>b[1].t-a[1].t),f=t=>new Date(t).toLocaleString('th-TH');
 let h='<div class="c"><h2>📊 Status</h2>';
 if(!s.length)h+='ยังไม่มีความคืบหน้าที่บันทึกไว้';
-else h+='<table class="st"><tr><th>วิชา/Part</th><th>โหมด</th><th>ความคืบหน้า</th><th>ถูก</th><th>สถานะ</th><th>ล่าสุด</th><th></th></tr>'+s.map(([k,r])=>{const st=(r.fin||(r.md<3&&r.done&&r.done.every(x=>x)))?'✅ ส่งแล้ว':r.a?'⏳ กำลังทำ (ข้อ '+(r.i+1)+')':'🆕 ยังไม่เริ่ม';
+else h+='<table class="st"><tr><th>วิชา/Part</th><th>โหมด</th><th>ความคืบหน้า</th><th>ถูก</th><th>⏱ เวลา</th><th>สถานะ</th><th>ล่าสุด</th><th></th></tr>'+s.map(([k,r])=>{const st=(r.fin||(r.md<3&&r.done&&r.done.every(x=>x)))?'✅ ส่งแล้ว':r.a?'⏳ กำลังทำ (ข้อ '+(r.i+1)+')':'🆕 ยังไม่เริ่ม';
 const cr=(r.md<3||r.fin)?`${r.c}/${r.n} (${Math.round(r.c/r.n*100)}%)`:'(เฉลยตอนส่ง)';
-return `<tr><td>${r.ex} · ${r.pt=='all'?'ทั้งหมด':'Part '+r.pt}${r.pt!='all'&&((window.EXAM_LINKS||{})[r.ex]||{})[r.pt]?` <a href="${window.EXAM_LINKS[r.ex][r.pt]}" target="_blank" rel="noopener">▶️</a>`:''}</td><td>${MN[r.md]}</td><td><div class="bar"><i style="width:${r.a/r.n*100}%"></i></div>${r.a}/${r.n}</td><td>${cr}</td><td>${st}</td><td>${f(r.t)}</td>
+return `<tr><td>${r.ex} · ${r.pt=='all'?'ทั้งหมด':'Part '+r.pt}${r.pt!='all'&&((window.EXAM_LINKS||{})[r.ex]||{})[r.pt]?` <a href="${window.EXAM_LINKS[r.ex][r.pt]}" target="_blank" rel="noopener">▶️</a>`:''}</td><td>${MN[r.md]}</td><td><div class="bar"><i style="width:${r.a/r.n*100}%"></i></div>${r.a}/${r.n}</td><td>${cr}</td><td>${fmt(r.el||0)}</td><td>${st}</td><td>${f(r.t)}</td>
 <td><button onclick="resume('${k}')">${r.fin?'ดูผล':'ทำต่อ'}</button><button class="g" onclick="restart('${k}')">เริ่มใหม่</button><button class="g" onclick="del('${k}')">ลบ</button></td></tr>`}).join('')+'</table>';
-if((d.h||[]).length)h+='<h3>ประวัติการส่ง</h3><table class="st"><tr><th>วันที่</th><th>วิชา/Part</th><th>โหมด</th><th>คะแนน</th></tr>'+d.h.map(x=>`<tr><td>${f(x.t)}</td><td>${x.ex} · ${x.pt=='all'?'ทั้งหมด':'Part '+x.pt}</td><td>${MN[x.md]}</td><td>${x.c}/${x.n} (${Math.round(x.c/x.n*100)}%) ${x.c/x.n>=.7?'🎉':'❌'}</td></tr>`).join('')+'</table>';
+if(s.length){const tt=s.reduce((x,[,r])=>x+(r.el||0),0);h+=`<div style="margin-top:6px"><b>⏱ เวลารวมทุก Part: ${fmt(tt)}</b></div>`}
+if((d.h||[]).length)h+='<h3>ประวัติการส่ง</h3><table class="st"><tr><th>วันที่</th><th>วิชา/Part</th><th>โหมด</th><th>คะแนน</th><th>⏱ เวลา</th></tr>'+d.h.map(x=>`<tr><td>${f(x.t)}</td><td>${x.ex} · ${x.pt=='all'?'ทั้งหมด':'Part '+x.pt}</td><td>${MN[x.md]}</td><td>${x.c}/${x.n} (${Math.round(x.c/x.n*100)}%) ${x.c/x.n>=.7?'🎉':'❌'}</td><td>${x.el!=null?fmt(x.el):'-'}</td></tr>`).join('')+'</table>';
 $('app').innerHTML=h+`<div style="margin-top:12px"><button onclick="expP()">💾 Export progress</button><label class="g" style="background:#888;color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer;margin:4px">📂 Import progress<input type="file" accept=".json" style="display:none" onchange="impP(this)"></label></div></div>`}
 
 // ===== In-exam switcher (Part / Mode) =====
