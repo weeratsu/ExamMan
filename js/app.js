@@ -51,7 +51,7 @@ return `<tr><td>${r.ex} · ${r.pt=='all'?'ทั้งหมด':'Part '+r.pt}${
 <td><button onclick="resume('${k}')">${r.fin?'ดูผล':'ทำต่อ'}</button><button class="g" onclick="restart('${k}')">เริ่มใหม่</button><button class="g" onclick="del('${k}')">ลบ</button></td></tr>`}).join('')+'</table>';
 if(s.length){const tt=s.reduce((x,[,r])=>x+(r.el||0),0);h+=`<div style="margin-top:6px"><b>⏱ เวลารวมทุก Part: ${fmt(tt)}</b></div>`}
 if((d.h||[]).length)h+='<h3>ประวัติการส่ง</h3><table class="st"><tr><th>วันที่</th><th>วิชา/Part</th><th>โหมด</th><th>คะแนน</th><th>⏱ เวลา</th></tr>'+d.h.map(x=>`<tr><td>${f(x.t)}</td><td>${x.ex} · ${x.pt=='all'?'ทั้งหมด':'Part '+x.pt}</td><td>${MN[x.md]}</td><td>${x.c}/${x.n} (${Math.round(x.c/x.n*100)}%) ${x.c/x.n>=.7?'🎉':'❌'}</td><td>${x.el!=null?fmt(x.el):'-'}</td></tr>`).join('')+'</table>';
-$('app').innerHTML=h+`<div style="margin-top:12px"><button onclick="expP()">💾 Export progress</button><label class="g" style="background:#888;color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer;margin:4px">📂 Import progress<input type="file" accept=".json" style="display:none" onchange="impP(this)"></label></div></div>`}
+$('app').innerHTML=h+`<div style="margin-top:12px"><button onclick="expP()">💾 Export progress</button><label class="g" style="background:#888;color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer;margin:4px">📂 Import progress<input type="file" accept=".json" style="display:none" onchange="impP(this)"></label></div></div>`;lbl()}
 
 // ===== In-exam switcher (Part / Mode) =====
 function bar(){const ps=[...new Set(DB[S.ex].map(q=>q.part))];
@@ -88,4 +88,8 @@ function nextQ(){if(S.i<S.L.length-1)return go(S.i+1);
 if(!S.fin){if(S.md==3)alert('ข้อสุดท้ายแล้ว — กด "ส่งทั้งพาร์ท" เพื่อส่ง');return}
 if(S.pt=='all')return;const ps=[...new Set(DB[S.ex].map(q=>q.part))],n=ps[ps.indexOf(S.pt)+1];
 if(!n)return alert('🎉 ทำครบทุก Part แล้ว');swPart(n);S._jump=1;draw()}
+
+
+// ===== Mobile table labels =====
+function lbl(){document.querySelectorAll('.st').forEach(t=>{const hs=[...t.querySelectorAll('th')].map(x=>x.textContent);t.querySelectorAll('tr').forEach(r=>[...r.children].forEach((c,i)=>{if(c.tagName=='TD')c.setAttribute('data-l',hs[i]||'')}))})}
 init();home();
